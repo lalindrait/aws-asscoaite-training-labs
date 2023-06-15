@@ -1,0 +1,21 @@
+https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-getting-started.html
+https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/authentication-authorization.html#mutual
+
+
+-- Use certificates for authentication
+-- AWS has its own VPN client for windows and MAC
+-- Gets connected to a subnet
+-- VPC and Local IP ranges hould not overalap
+-- Can have split tunneling enabled
+-- Cna use any openvpn client
+
+
+
+Steps
+=====
+
+git clone https://github.com/OpenVPN/easy-rsa.git
+cd easy-rsa/easyrsa3
+
+
+

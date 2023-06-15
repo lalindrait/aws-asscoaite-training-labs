@@ -1,0 +1,111 @@
+Step 1 : Create the VPC
+================================================================
+
+Creating a VPC automatically creates
+	1. Route table 
+		a. ("Main": true)
+		b. Local route for the VPC
+	2. NACL ("IsDefault": true)
+		a. Allow all inbound
+		b. Allow all outbound
+	3. Security group ("GroupName": "default")
+		a. Allow all outbound
+		b. Deny all inbound
+
+aws ec2 create-vpc --cidr-block 172.31.0.0/16
+aws ec2 create-tags --resources vpc-0d295e3727a5fb824 --tags Key=Name,Value="WebApp-VPC"
+aws ec2 create-tags --resources rtb-087e8ca0b58ccb65f --tags Key=Name,Value="VPC-Main"
+aws ec2 describe-vpcs
+
+Step 1 : Create a subnet
+================================================================
+aws ec2 create-subnet --vpc-id vpc-0d295e3727a5fb824 --cidr-block 172.31.1.0/24 --availability-zone ap-south-1a
+aws ec2 modify-subnet-attribute --subnet-id subnet-0c70941e9d7ebe1c7  --map-public-ip-on-launch
+aws ec2 create-tags --resources subnet-0c70941e9d7ebe1c7 --tags Key=Name,Value="WebApp-1a-Public-SN"
+aws ec2 describe-subnets
+
+Step 1 : Create keypair (EC2 instance login)
+================================================================
+aws ec2 create-key-pair --key-name WebApp-KeyPair
+OR
+aws ec2 create-key-pair --key-name WebApp-KeyPair --query 'KeyMaterial' --output text > WebApp-KeyPair.pem
+aws ec2 describe-key-pairs
+
+Step 1 : Create Security Group
+================================================================
+aws ec2 create-security-group --group-name WebApp-Public-In --description "Allow Traffic in from Internet" --vpc-id vpc-0d295e3727a5fb824
+aws ec2 describe-images --image-ids ami-0ce933e2ae91880d3
+
+Step 1 : Create instance
+================================================================
+aws ec2 run-instances --image-id ami-0ce933e2ae91880d3 --count 1 --instance-type t2.micro --key-name WebApp-KeyPair --security-group-ids sg-0811d45d304db23ab --subnet-id subnet-0c70941e9d7ebe1c7
+
+Step 1 : Create Internet Gateway
+================================================================
+aws ec2 create-internet-gateway
+aws ec2 attach-internet-gateway --internet-gateway-id igw-03f3d3db42c107ce7 --vpc-id vpc-0d295e3727a5fb824
+
+Step 1 : Create Route Table
+================================================================
+aws ec2 create-route-table --vpc-id vpc-0c1b55c06fc59f131
+aws ec2 create-tags --resources rtb-0bac8ab3a3a094605 --tags Key=Name,Value="Public-Subnet-RTB"
+aws ec2 create-route --route-table-id rtb-0bac8ab3a3a094605 --destination-cidr-block 0.0.0.0/0 --gateway-id igw-03f3d3db42c107ce7
+aws ec2 associate-route-table --route-table-id rtb-0bac8ab3a3a094605 --subnet-id subnet-0c70941e9d7ebe1c7
+
+Step 1 : Add rules to the security group
+================================================================
+aws ec2 authorize-security-group-ingress --group-id sg-0811d45d304db23ab --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+Step 1 : Connect to the instance
+================================================================
+chmod 400 WebApp-KeyPair.pem
+ssh -i WebApp-KeyPair.pem ec2-user@13.232.202.214
+
+
+
+Clean up - VPC and resources (In reverse order)
+================================================================
+
+aws ec2 terminate-instances --instance-ids i-0fbfa7a4c9b9e619b
+aws ec2 delete-key-pair --key-name WebApp-KeyPair
+aws ec2 revoke-security-group-ingress --group-id sg-0811d45d304db23ab --protocol tcp --port 22 --cidr 0.0.0.0/0
+aws ec2 delete-security-group --group-id sg-0811d45d304db23ab
+
+aws ec2 disassociate-route-table --association-id rtbassoc-0299bf2d79a45ed03
+aws ec2 delete-route --route-table-id rtb-0bac8ab3a3a094605 --destination-cidr-block 0.0.0.0/0
+aws ec2 delete-route-table --route-table-id rtb-0bac8ab3a3a094605
+
+aws ec2 detach-internet-gateway --internet-gateway-id igw-03f3d3db42c107ce7 --vpc-id vpc-0d295e3727a5fb824
+aws ec2 delete-internet-gateway --internet-gateway-id igw-03f3d3db42c107ce7
+
+aws ec2 delete-subnet --subnet-id subnet-0c70941e9d7ebe1c7
+aws ec2 delete-vpc --vpc-id vpc-0d295e3727a5fb824
+
+
+
+
+List Commands
+
+aws ec2 describe-vpcs
+aws ec2 describe-subnets
+aws ec2 describe-internet-gateways
+aws ec2 describe-nat-gateways
+aws ec2 describe-network-acls
+aws ec2 describe-egress-only-internet-gateways
+aws ec2 describe-network-interfaces
+aws ec2 describe-route-tables
+aws ec2 describe-security-groups
+
+
+aws ec2 describe-vpcs; aws ec2 describe-subnets; aws ec2 describe-internet-gateways; aws ec2 describe-nat-gateways; aws ec2 describe-network-acls ; \
+aws ec2 describe-egress-only-internet-gateways; aws ec2 describe-network-interfaces; aws ec2 describe-route-tables; aws ec2 describe-security-groups
+
+alias listall="aws ec2 describe-vpcs; aws ec2 describe-subnets; aws ec2 describe-internet-gateways; aws ec2 describe-nat-gateways; aws ec2 describe-network-acls ; \
+> aws ec2 describe-egress-only-internet-gateways; aws ec2 describe-network-interfaces; aws ec2 describe-route-tables; aws ec2 describe-security-groups"
+
+
+Misc commands
+
+aws ec2 describe-images --image-ids ami-0ce933e2ae91880d3
+
+

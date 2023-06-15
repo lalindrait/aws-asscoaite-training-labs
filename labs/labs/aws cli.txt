@@ -1,0 +1,48 @@
+Installing AWS CLI
+=================
+
+wget https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+unzip awscli-bundle.zip
+python3 install -b /home/bsl/.local/bin/aws
+aws --version
+
+
+Configure AWSCLI
+================
+aws configure
+
+cat ~/.aws/config
+cat ~/.aws/credentials
+
+aws configure --profile lab-user
+aws sts get-caller-identity --profile lab-user
+export AWS_DEFAULT_PROFILE=lab-user
+
+
+Assume role in AWS CLI
+=======================
+
+aws sts assume-role --role-arn arn:aws:iam::933325688911:role/admin-role --role-session-name admin-session
+
+export AWS_ACCESS_KEY_ID=ASIA5STUL2BHQSRDCECJ
+export AWS_SECRET_ACCESS_KEY=mmNU2sP6W8oFBp7IX8eKesD20zQEG+l9EylSOOWH
+export AWS_SESSION_TOKEN=FwoGZXIvYXdzEGUaDPH8l/rrOzR9DFFhAyKxAf6BD3z2CdVI9mKh6sJhuVwTe0RI87mkA5RHeY9H3no65o3my045VkXdmwRun3BqGV9s/DEJbYuppKGFu9taUDaIyOWK6dX1STwU7BhnWw4Ye19zKfLK7SlpUuAQqk51pV52wpwPIDaHXvkoSA5qHsg59s/6s8EWqUREryKSWBcujTTrsirkq0JVWYO38T19UChPT1sBTb+r+FlLjGER2P+CWCH5ydXm7E+ocmIOotIAgyiGsf31BTItuP8e781qIQvCAbQVCGEHNOUsDnzcixW6UJXJcPVhJdqNeRy4aWiCTtHRCirh
+
+aws sts get-caller-identity
+
+
+unset AWS_ACCESS_KEY_ID
+aws sts get-caller-identity
+
+
+
+
+#aws sts get-caller-identity
+#aws iam list-account-aliases
+#aws s3 ls
+#aws ec2 describe-instances
+#aws ec2 describe-instances --output json
+#aws ec2 describe-instances --output text
+#aws ec2 describe-instances --output table
+#aws ec2 describe-regions | jq .Regions
+#aws ec2 describe-instances | jq .Reservations[].Instances[].InstanceId

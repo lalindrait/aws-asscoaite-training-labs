@@ -1,0 +1,20 @@
+Sync time with google
+=====================
+date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"
+
+
+Mics
+====
+
+
+aws s3 rb s3://hglw-1212-input --force
+
+aws dynamodb list-tables
+aws dynamodb delete-table --table-name voters_1
+
+
+aws sqs delete-queue --queue-url https://ap-south-1.queue.amazonaws.com/968255577142/lali_q
+
+
+PS C:\Users\Lalindra Harankahawa> aws guardduty list-detectors --region ap-south-1 --query 'DetectorIds'                                                     PS C:\Users\Lalindra Harankahawa> aws guardduty list-detectors --region ap-south-1 --query 'DetectorIds'                                                     b0b778032d3ed609e379072a22b29cc8
+PS C:\Users\Lalindra Harankahawa> aws guardduty list-detectors --region ap-south-1 --query 'DetectorIds'                                                     PS C:\Users\Lalindra Harankahawa>      

@@ -1,0 +1,95 @@
+aws s3 mb s3://hglw-lab-test                                    #create a bucket in s3
+
+aws s3 ls                                                       #list buckets in s3
+aws s3 ls s3://bsl-aws-test                                     #list object inside a bucket
+
+aws s3 cp s3-file-1.txt s3://bsl-aws-test                       #upload an object to s3
+aws s3 cp s3://bsl-aws-test/s3-file-1.txt .                     #download an s3 object 
+
+aws s3 cp aws-training s3://hglw-lab-test --recursive           #upload a directory to s3
+aws s3 sync . s3://hglw-lab-test                                #sync a directory with s3
+aws s3 sync s3://hglw-lab-test s3://bsl-aws-test                #sync two s3 buckets
+
+aws s3 rm s3://hglw-ol --recursive                              #empty the s3 bucket. delete all objects
+aws s3 rb s3://hglw-web                                         #delete a bucket. bucket should be empty
+
+
+aws s3 rb s3://hglw-b1 --force                                  #delete bucket with all files if not versioned
+
+
+
+
+S3
+===
+# s3 make bucket (create bucket)
+aws s3 mb s3://tgsbucket --region us-west-2
+# s3 remove bucket
+aws s3 rb s3://tgsbucket
+aws s3 rb s3://tgsbucket --force
+# s3 ls commands
+aws s3 ls
+aws s3 ls s3://tgsbucket
+aws s3 ls s3://tgsbucket --recursive
+aws s3 ls s3://tgsbucket --recursive  --human-readable --summarize
+# s3 cp commands
+aws s3 cp getdata.php s3://tgsbucket
+aws s3 cp /local/dir/data s3://tgsbucket --recursive
+aws s3 cp s3://tgsbucket/getdata.php /local/dir/data
+aws s3 cp s3://tgsbucket/ /local/dir/data --recursive
+aws s3 cp s3://tgsbucket/init.xml s3://backup-bucket
+aws s3 cp s3://tgsbucket s3://backup-bucket --recursive
+# s3 mv commands
+aws s3 mv source.json s3://tgsbucket
+aws s3 mv s3://tgsbucket/getdata.php /home/project
+aws s3 mv s3://tgsbucket/source.json s3://backup-bucket
+aws s3 mv /local/dir/data s3://tgsbucket/data --recursive
+aws s3 mv s3://tgsbucket s3://backup-bucket --recursive
+# s3 rm commands
+aws s3 rm s3://tgsbucket/queries.txt
+aws s3 rm s3://tgsbucket --recursive
+# s3 sync commands
+aws s3 sync backup s3://tgsbucket
+aws s3 sync s3://tgsbucket/backup /tmp/backup
+aws s3 sync s3://tgsbucket s3://backup-bucket
+# s3 bucket website
+aws s3 website s3://tgsbucket/ --index-document index.html --error-document error.html
+# s3 presign url (default 3600 seconds)
+aws s3 presign s3://tgsbucket/dnsrecords.txt
+aws s3 presign s3://tgsbucket/dnsrecords.txt --expires-in
+
+
+NOTES
+=====
+
+--- Delting buckets with versions is a problem with AWS CLI. Need to iterate through all version and delete it. No single switch to do it. 
+
+
+
+
+{
+    "Id": "Policy1589603026088",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1589603023750",
+            "Action": "s3:*",
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::hglw-lab-test/*",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::933325688911:user/lab-user"
+                ]
+            }
+        }
+    ]
+}
+
+--- No need to have any IAM permission everything is give by bucket policy
+
+"Action": "s3:ListAllMyBuckets" -> Lists buckets in s3
+"Action": "s3:ListBucket" -> List contents of a bucket
+
+
+-- To open the Object URL you need Public access to the bucket and anonymous access. IT not accessde throug the IAM user.
+Object URL
+https://hglw-lab-test.s3.ap-south-1.amazonaws.com/s3-file-1.txt 

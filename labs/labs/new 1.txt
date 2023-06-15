@@ -1,0 +1,39 @@
+https://linuxize.com/post/how-to-install-mongodb-on-centos-8/
+
+
+vi /etc/yum.repos.d/mongodb-org.repo
+
+[mongodb-org-4.2]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.2/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc
+
+
+dnf install mongodb-org
+systemctl enable mongod --now
+mongo
+db.version()
+quit()
+
+vi /etc/mongod.conf
+change the bindIP
+systemctl restart mongod
+
+
+
+
+May 23 00:29:36 centos8 mongod[11669]: about to fork child process, waiting until server is ready for connections.
+May 23 00:29:36 centos8 mongod[11669]: forked process: 11672
+May 23 00:29:36 centos8 mongod[11669]: ERROR: child process failed, exited with error number 14
+May 23 00:29:36 centos8 mongod[11669]: To see additional information in this output, start without the "--fork" option.
+May 23 00:29:36 centos8 systemd[1]: mongod.service: Control process exited, code=exited status=14
+May 23 00:29:36 centos8 systemd[1]: mongod.service: Failed with result 'exit-code'.
+May 23 00:29:36 centos8 systemd[1]: Failed to start MongoDB Database Server.
+
+EXECUTE THE FOLLOWING
+
+
+chown -R mongodb:mongodb /var/lib/mongodb
+chown mongodb:mongodb /tmp/mongodb-27017.sock

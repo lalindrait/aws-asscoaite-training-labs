@@ -1,0 +1,7 @@
+sudo su - 
+yum install mysql
+
+mysql -u admin -p -h terraform-20200523073526328600000001.cj82fewl8njy.ap-southeast-1.rds.amazonaws.com
+
+
+> MySQL [(none)]> show databases
